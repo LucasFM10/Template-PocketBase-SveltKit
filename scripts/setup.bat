@@ -9,6 +9,13 @@ if not exist "apps\web\.env" (
     )
 )
 
+if not exist "apps\pocketbase\.env" (
+    if exist "apps\pocketbase\.env.example" (
+        copy "apps\pocketbase\.env.example" "apps\pocketbase\.env"
+        echo ✅ Arquivo apps\pocketbase\.env criado a partir do .env.example.
+    )
+)
+
 echo 📦 Instalando dependencias do SvelteKit...
 cd apps\web
 call npm install

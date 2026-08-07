@@ -4,6 +4,16 @@ $ProjectRoot = Resolve-Path "$PSScriptRoot\.."
 $PbExe = "$ProjectRoot\apps\pocketbase\pocketbase.exe"
 $PbData = "$ProjectRoot\apps\pocketbase\pb_data"
 $PbMigrations = "$ProjectRoot\apps\pocketbase\pb_migrations"
+$PbEnvFile = "$ProjectRoot\apps\pocketbase\.env"
+
+# Carrega variáveis de ambiente de apps/pocketbase/.env se existir
+if (Test-Path $PbEnvFile) {
+    Get-Content $PbEnvFile | ForEach-Object {
+        if ($_ -match "^\s*([^#=]+)\s*=\s*(.*)\s*$") {
+            [System.Environment]::SetEnvironmentVariable($matches[1].Trim(), $matches[2].Trim(), "Process")
+        }
+    }
+}
 
 # Se o executável do PocketBase não existir, baixa automaticamente a versão oficial
 if (-not (Test-Path $PbExe)) {

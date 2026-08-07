@@ -15,6 +15,8 @@ services:
       dockerfile: Dockerfile
       args:
         PB_VERSION: "0.39.4"
+    env_file:
+      - ./apps/pocketbase/.env
     ports:
       - "8090:8090"
     volumes:

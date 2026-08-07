@@ -8,16 +8,25 @@ $ProjectRoot = Resolve-Path "$PSScriptRoot\.."
 
 Write-Host "`n🚀 Configurando novo projeto Monorepo..." -ForegroundColor Cyan
 
-# 1. Copiar .env.example para .env se não existir
-$EnvExample = "$ProjectRoot\apps\web\.env.example"
-$EnvFile = "$ProjectRoot\apps\web\.env"
+# 1. Copiar .env.example para .env em apps/web se não existir
+$WebEnvExample = "$ProjectRoot\apps\web\.env.example"
+$WebEnvFile = "$ProjectRoot\apps\web\.env"
 
-if (-not (Test-Path $EnvFile) -and (Test-Path $EnvExample)) {
-    Copy-Item $EnvExample $EnvFile
+if (-not (Test-Path $WebEnvFile) -and (Test-Path $WebEnvExample)) {
+    Copy-Item $WebEnvExample $WebEnvFile
     Write-Host "✅ Arquivo apps/web/.env criado a partir do .env.example." -ForegroundColor Green
 }
 
-# 2. Instalar dependências do Frontend
+# 2. Copiar .env.example para .env em apps/pocketbase se não existir
+$PbEnvExample = "$ProjectRoot\apps\pocketbase\.env.example"
+$PbEnvFile = "$ProjectRoot\apps\pocketbase\.env"
+
+if (-not (Test-Path $PbEnvFile) -and (Test-Path $PbEnvExample)) {
+    Copy-Item $PbEnvExample $PbEnvFile
+    Write-Host "✅ Arquivo apps/pocketbase/.env criado a partir do .env.example." -ForegroundColor Green
+}
+
+# 3. Instalar dependências do Frontend
 Write-Host "📦 Instalando dependências do SvelteKit em apps/web..." -ForegroundColor Yellow
 Set-Location "$ProjectRoot\apps\web"
 npm install

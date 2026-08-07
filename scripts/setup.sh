@@ -11,6 +11,11 @@ if [ ! -f "$PROJECT_ROOT/apps/web/.env" ] && [ -f "$PROJECT_ROOT/apps/web/.env.e
     echo "✅ Arquivo apps/web/.env criado a partir do .env.example."
 fi
 
+if [ ! -f "$PROJECT_ROOT/apps/pocketbase/.env" ] && [ -f "$PROJECT_ROOT/apps/pocketbase/.env.example" ]; then
+    cp "$PROJECT_ROOT/apps/pocketbase/.env.example" "$PROJECT_ROOT/apps/pocketbase/.env"
+    echo "✅ Arquivo apps/pocketbase/.env criado a partir do .env.example."
+fi
+
 echo "📦 Instalando dependências do SvelteKit..."
 cd "$PROJECT_ROOT/apps/web"
 npm install
