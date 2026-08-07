@@ -1,7 +1,6 @@
-# Script para rodar o projeto especificamente via Docker Compose
+# Script para rodar o projeto via Docker Compose (Com auto-setup)
 
 $ProjectRoot = Resolve-Path "$PSScriptRoot\.."
-Set-Location $ProjectRoot
 
 # Auto-setup .env
 $WebEnv = "$ProjectRoot\apps\web\.env"
@@ -12,5 +11,6 @@ $PbEnv = "$ProjectRoot\apps\pocketbase\.env"
 $PbEnvEx = "$ProjectRoot\apps\pocketbase\.env.example"
 if (-not (Test-Path $PbEnv) -and (Test-Path $PbEnvEx)) { Copy-Item $PbEnvEx $PbEnv }
 
-Write-Host "🐳 Subindo PocketBase e SvelteKit no Docker..." -ForegroundColor Cyan
+Write-Host "`n🐳 Subindo PocketBase e SvelteKit via Docker Compose..." -ForegroundColor Cyan
+Set-Location $ProjectRoot
 docker compose up --build
