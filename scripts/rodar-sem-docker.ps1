@@ -42,6 +42,8 @@ if (-not (Test-Path $PbExe)) {
         Invoke-WebRequest -Uri $Url -OutFile $ZipPath
         Expand-Archive -Path $ZipPath -DestinationPath "$ProjectRoot\apps\pocketbase" -Force
         Remove-Item $ZipPath -Force
+        Remove-Item "$ProjectRoot\apps\pocketbase\CHANGELOG.md" -ErrorAction SilentlyContinue
+        Remove-Item "$ProjectRoot\apps\pocketbase\LICENSE.md" -ErrorAction SilentlyContinue
         Write-Host "✅ PocketBase baixado com sucesso!" -ForegroundColor Green
     } catch {
         Write-Host "⚠️ Falha ao baixar o PocketBase automaticamente. Baixe de pocketbase.io e coloque em apps/pocketbase/pocketbase.exe" -ForegroundColor Red
@@ -52,7 +54,7 @@ if (-not (Test-Path $PbExe)) {
 Write-Host "🚀 Iniciando PocketBase localmente..." -ForegroundColor Cyan
 $pbProcess = Start-Process -FilePath $PbExe -ArgumentList "serve --dir=`"$PbData`" --migrationsDir=`"$PbMigrations`"" -PassThru
 
-Write-Host "⚡ Iniciando SvelteKit (apps/web)..." -ForegroundColor Green
+Write-Host "⚡ Iniciando SvelteKit - apps/web..." -ForegroundColor Green
 Set-Location "$ProjectRoot\apps\web"
 
 try {

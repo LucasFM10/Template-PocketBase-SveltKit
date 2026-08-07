@@ -3,3 +3,6 @@ pb_data_backup/
 *.log
 pocketbase.exe
 pocketbase
+CHANGELOG.md
+LICENSE.md
+*.zip

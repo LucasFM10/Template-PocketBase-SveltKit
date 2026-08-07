@@ -26,6 +26,8 @@ if [ ! -f "$PB_BIN" ]; then
     curl -sL "$URL" -o "$PROJECT_ROOT/apps/pocketbase/pocketbase.zip"
     unzip -o "$PROJECT_ROOT/apps/pocketbase/pocketbase.zip" -d "$PROJECT_ROOT/apps/pocketbase"
     rm -f "$PROJECT_ROOT/apps/pocketbase/pocketbase.zip"
+    rm -f "$PROJECT_ROOT/apps/pocketbase/CHANGELOG.md"
+    rm -f "$PROJECT_ROOT/apps/pocketbase/LICENSE.md"
     chmod +x "$PB_BIN"
     echo "✅ PocketBase baixado com sucesso!"
 fi
