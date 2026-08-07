@@ -17,11 +17,20 @@ PB_DATA="$PROJECT_ROOT/apps/pocketbase/pb_data"
 PB_MIGRATIONS="$PROJECT_ROOT/apps/pocketbase/pb_migrations"
 
 if [ ! -f "$PB_BIN" ]; then
-    echo "⚠️ Executável do PocketBase não encontrado em $PB_BIN"
-    exit 1
+    echo "📥 Executável do PocketBase não encontrado em $PB_BIN. Baixando versão oficial v0.39.4..."
+    OS="$(uname -s | tr '[:upper:]' '[:lower:]')"
+    ARCH="$(uname -m)"
+    if [ "$ARCH" = "x86_64" ]; then ARCH="amd64"; fi
+    if [ "$ARCH" = "aarch64" ] || [ "$ARCH" = "arm64" ]; then ARCH="arm64"; fi
+    URL="https://github.com/pocketbase/pocketbase/releases/download/v0.39.4/pocketbase_0.39.4_${OS}_${ARCH}.zip"
+    curl -sL "$URL" -o "$PROJECT_ROOT/apps/pocketbase/pocketbase.zip"
+    unzip -o "$PROJECT_ROOT/apps/pocketbase/pocketbase.zip" -d "$PROJECT_ROOT/apps/pocketbase"
+    rm -f "$PROJECT_ROOT/apps/pocketbase/pocketbase.zip"
+    chmod +x "$PB_BIN"
+    echo "✅ PocketBase baixado com sucesso!"
 fi
 
-echo "🚀 Iniciando PocketBase localmente (sem Docker)..."
+echo "🚀 Iniciando PocketBase localmente..."
 "$PB_BIN" serve --dir="$PB_DATA" --migrationsDir="$PB_MIGRATIONS" &
 PB_PID=$!
 
@@ -31,6 +40,6 @@ cleanup() {
 }
 trap cleanup EXIT
 
-echo "⚡ Iniciando SvelteKit (apps/web)..."
+echo "⚡ Iniciando SvelteKit - apps/web..."
 cd "$PROJECT_ROOT/apps/web"
 npm run dev

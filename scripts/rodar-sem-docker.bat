@@ -12,9 +12,9 @@ if not exist "apps\web\node_modules" (
 )
 
 if not exist "apps\pocketbase\pocketbase.exe" (
-    echo ⚠️ Executavel do PocketBase nao encontrado em apps\pocketbase\pocketbase.exe.
-    echo Por favor, rode o script via PowerShell para baixar automaticamente.
-    exit /b 1
+    echo 📥 Executavel do PocketBase nao encontrado em apps\pocketbase. Baixando versao oficial v0.39.4...
+    powershell -Command "Invoke-WebRequest -Uri https://github.com/pocketbase/pocketbase/releases/download/v0.39.4/pocketbase_0.39.4_windows_amd64.zip -OutFile apps\pocketbase\pocketbase.zip; Expand-Archive -Path apps\pocketbase\pocketbase.zip -DestinationPath apps\pocketbase -Force; Remove-Item apps\pocketbase\pocketbase.zip -Force"
+    echo ✅ PocketBase baixado com sucesso!
 )
 
 echo 🚀 Iniciando PocketBase localmente...
