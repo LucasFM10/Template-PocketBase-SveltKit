@@ -1,0 +1,51 @@
+# ============================================================
+# Docker Compose — Desenvolvimento local e referência
+# ============================================================
+# Para rodar tudo via Docker: docker compose up --build
+# No Coolify: cada serviço é deployado como recurso separado
+# ============================================================
+
+services:
+  # --------------------------------------------------------
+  # PocketBase — Backend/BaaS
+  # --------------------------------------------------------
+  pocketbase:
+    build:
+      context: ./apps/pocketbase
+      dockerfile: Dockerfile
+      args:
+        PB_VERSION: "0.39.4"
+    ports:
+      - "8090:8090"
+    volumes:
+      - pb_data:/app/pb_data
+      - ./apps/pocketbase/pb_migrations:/app/pb_migrations
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8090/api/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # --------------------------------------------------------
+  # Web — Frontend SvelteKit
+  # --------------------------------------------------------
+  web:
+    build:
+      context: ./apps/web
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    environment:
+      - PUBLIC_POCKETBASE_URL=http://localhost:8090
+    volumes:
+      - ./apps/web:/app
+      - /app/node_modules
+    depends_on:
+      pocketbase:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  pb_data:
+    driver: local
