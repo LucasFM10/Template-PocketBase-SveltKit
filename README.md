@@ -8,30 +8,28 @@ Este é um **Template Monorepo** pronto para uso ("plug-and-play") combinando **
 
 ### 1. Clonar o Repositório
 ```bash
-git clone https://github.com/SEU_USUARIO/SEU_REPOSISOTORIO.git meu-novo-projeto
+git clone https://github.com/LucasFM10/Template-PocketBase-SveltKit.git meu-novo-projeto
 cd meu-novo-projeto
 ```
 
-### 2. Rodar o Setup (Apenas 1 vez após clonar)
-```powershell
-# No Windows PowerShell:
-.\scripts\setup.ps1
+### 2. Rodar a Aplicação (O setup é 100% automático no 1º boot!)
 
-# Ou no Linux/macOS:
-./scripts/setup.sh
+#### Opção A — Método Padrão (Tenta Docker com fallback automático):
+```powershell
+.\scripts\rodar.ps1
 ```
 
-### 3. Rodar a Aplicação
-
-#### Option A — Com Docker (Recomendado) 🐳
+#### Opção B — Forçar Docker 🐳:
 ```powershell
-.\scripts\dev.ps1
+.\scripts\rodar-com-docker.ps1
 ```
 
-#### Option B — Sem Docker (Local com pocketbase.exe) 🚀
+#### Opção C — Forçar Sem Docker 🚀:
 ```powershell
-.\scripts\dev.ps1 -Local
+.\scripts\rodar-sem-docker.ps1
 ```
+
+*(No Prompt de Comando do Windows, você também pode usar `.\scripts\rodar.bat`, `.\scripts\rodar-com-docker.bat` ou `.\scripts\rodar-sem-docker.bat`)*
 
 ---
 
@@ -42,7 +40,7 @@ cd meu-novo-projeto
 - **Dashboard Admin do PocketBase:** [http://localhost:8090/_/](http://localhost:8090/_/)
 
 ### 🔐 Credenciais Padrão do Admin
-O PocketBase já cria um superusuário automático no primeiro boot:
+O PocketBase já cria um superusuário automático no primeiro boot (configurável em `apps/pocketbase/.env`):
 - **E-mail:** `admin@admin.com`
 - **Senha:** `admin123456`
 
@@ -55,8 +53,8 @@ O PocketBase já cria um superusuário automático no primeiro boot:
 ├── apps/
 │   ├── pocketbase/         # Backend PocketBase
 │   │   ├── Dockerfile
-│   │   ├── pb_migrations/  # Migrações automáticas em JS
-│   │   └── pocketbase.exe
+│   │   ├── .env.example
+│   │   └── pb_migrations/  # Migrações automáticas em JS
 │   └── web/                # Frontend SvelteKit
 │       ├── Dockerfile
 │       ├── .env.example
@@ -67,10 +65,9 @@ O PocketBase já cria um superusuário automático no primeiro boot:
 │           └── routes/
 │               └── +page.svelte  # Exemplo do Gerenciador de Batatas 🥔
 ├── scripts/
-│   ├── setup.ps1 / .sh     # Script de inicialização pós-clone
-│   ├── dev.ps1 / .sh       # Script unificado para rodar a aplicação
-│   ├── dev-docker.ps1      # Força modo Docker
-│   └── dev-local.ps1       # Força modo Local (sem Docker)
+│   ├── rodar.ps1 / .bat / .sh             # Script principal (Auto-setup + Docker / Fallback)
+│   ├── rodar-com-docker.ps1 / .bat / .sh  # Execução via Docker
+│   └── rodar-sem-docker.ps1 / .bat / .sh  # Execução local direta (sem Docker)
 ├── docker-compose.yml      # Configuração Docker para desenvolvimento local
 └── README.md
 ```

@@ -4,6 +4,14 @@ set -e
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 PROJECT_ROOT="$DIR/.."
 
+[ ! -f "$PROJECT_ROOT/apps/web/.env" ] && [ -f "$PROJECT_ROOT/apps/web/.env.example" ] && cp "$PROJECT_ROOT/apps/web/.env.example" "$PROJECT_ROOT/apps/web/.env"
+[ ! -f "$PROJECT_ROOT/apps/pocketbase/.env" ] && [ -f "$PROJECT_ROOT/apps/pocketbase/.env.example" ] && cp "$PROJECT_ROOT/apps/pocketbase/.env.example" "$PROJECT_ROOT/apps/pocketbase/.env"
+
+if [ ! -d "$PROJECT_ROOT/apps/web/node_modules" ]; then
+    echo "📦 Primeira execução detectada! Instalando dependências..."
+    cd "$PROJECT_ROOT/apps/web" && npm install
+fi
+
 PB_BIN="$PROJECT_ROOT/apps/pocketbase/pocketbase"
 PB_DATA="$PROJECT_ROOT/apps/pocketbase/pb_data"
 PB_MIGRATIONS="$PROJECT_ROOT/apps/pocketbase/pb_migrations"
