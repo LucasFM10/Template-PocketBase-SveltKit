@@ -1,4 +1,5 @@
 @echo off
+chcp 65001 >nul
 cd /d "%~dp0.."
 
 if not exist "apps\web\.env" if exist "apps\web\.env.example" copy "apps\web\.env.example" "apps\web\.env" >nul
