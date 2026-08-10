@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { pb } from '$lib/pocketbase';
+	import { auth } from '$lib/auth.svelte';
 
 	interface Batata {
 		id: string;
@@ -12,6 +13,12 @@
 	let loading = $state(true);
 	let errorMsg = $state('');
 
+	// Estado do formulário de Login
+	let loginEmail = $state('user@teste.com');
+	let loginPassword = $state('senha123456');
+	let authError = $state('');
+	let authLoading = $state(false);
+
 	// Formulário para Nova Batata
 	let newName = $state('');
 	let newTipo = $state('Frita');
@@ -21,11 +28,31 @@
 	let editName = $state('');
 	let editTipo = $state('');
 
+	async function handleLogin(e: Event) {
+		e.preventDefault();
+		authError = '';
+		authLoading = true;
+
+		try {
+			await auth.login(loginEmail, loginPassword);
+			loginPassword = '';
+		} catch (err: any) {
+			console.error(err);
+			authError = 'Falha ao autenticar. Verifique o e-mail e a senha (ex: user@teste.com / senha123456).';
+		} finally {
+			authLoading = false;
+		}
+	}
+
+	function handleLogout() {
+		auth.logout();
+		cancelEdit();
+	}
+
 	async function fetchBatatas() {
 		try {
 			loading = true;
 			errorMsg = '';
-			// Chamada simples sem parâmetros complexos de ordenação
 			const records = await pb.collection('batatas').getFullList<Batata>();
 			batatas = records;
 		} catch (err: any) {
@@ -55,6 +82,10 @@
 	}
 
 	function startEdit(b: Batata) {
+		if (!auth.isValid) {
+			alert('Você precisa estar logado para editar batatas.');
+			return;
+		}
 		editingId = b.id;
 		editName = b.name;
 		editTipo = b.tipo || 'Frita';
@@ -76,17 +107,21 @@
 			cancelEdit();
 			await fetchBatatas();
 		} catch (err: any) {
-			alert('Erro ao atualizar batata: ' + err.message);
+			alert('Erro ao atualizar (permissão negada ou erro): ' + err.message);
 		}
 	}
 
 	async function deleteBatata(id: string) {
+		if (!auth.isValid) {
+			alert('Você precisa estar logado para excluir batatas.');
+			return;
+		}
 		if (!confirm('Deseja excluir esta batata? 🥔')) return;
 		try {
 			await pb.collection('batatas').delete(id);
 			await fetchBatatas();
 		} catch (err: any) {
-			alert('Erro ao deletar: ' + err.message);
+			alert('Erro ao deletar (permissão negada ou erro): ' + err.message);
 		}
 	}
 
@@ -96,16 +131,54 @@
 </script>
 
 <svelte:head>
-	<title>Gerenciador de Batatas 🥔 — Monorepo Template</title>
+	<title>Gerenciador de Batatas 🥔 — Autenticação & Permissões</title>
 </svelte:head>
 
 <div class="card">
-	<h1>🥔 Gerenciador de Batatas</h1>
-	<p class="subtitle">Exemplo CRUD simples conectando SvelteKit + PocketBase.</p>
+	<div class="header-banner">
+		<div>
+			<h1>🥔 Gerenciador de Batatas</h1>
+			<p class="subtitle">Exemplo CRUD com Autenticação & Permissões (SvelteKit + PocketBase).</p>
+		</div>
 
-	<!-- Formulário de Adicionar -->
+		<!-- Seção de Autenticação / Perfil -->
+		<div class="auth-box">
+			{#if auth.isValid && auth.user}
+				<div class="logged-in">
+					<span class="user-badge">👤 Logado como: <strong>{auth.user.email}</strong></span>
+					<button class="btn-logout" onclick={handleLogout}>🚪 Sair (Logout)</button>
+				</div>
+			{:else}
+				<form onsubmit={handleLogin} class="login-form">
+					<div class="login-inputs">
+						<input
+							type="email"
+							placeholder="E-mail (ex: user@teste.com)"
+							bind:value={loginEmail}
+							required
+						/>
+						<input
+							type="password"
+							placeholder="Senha"
+							bind:value={loginPassword}
+							required
+						/>
+						<button type="submit" class="btn-login" disabled={authLoading}>
+							{authLoading ? 'Entrando...' : '🔑 Entrar'}
+						</button>
+					</div>
+					{#if authError}
+						<p class="auth-error">{authError}</p>
+					{/if}
+					<p class="login-hint">💡 Dica de Teste: <code>user@teste.com</code> / <code>senha123456</code></p>
+				</form>
+			{/if}
+		</div>
+	</div>
+
+	<!-- Formulário de Adicionar (Público - Qualquer um pode criar) -->
 	<form onsubmit={addBatata} class="form">
-		<h2>Adicionar Nova Batata</h2>
+		<h2>Adicionar Nova Batata <span class="public-tag">🌐 Público (Não requer login)</span></h2>
 		<div class="row">
 			<input type="text" placeholder="Nome da Batata (ex: Batata Frita Crocante)" bind:value={newName} required />
 			<select bind:value={newTipo}>
@@ -160,8 +233,12 @@
 							<span class="badge">{b.tipo || 'Frita'}</span>
 						</div>
 						<div class="actions">
-							<button class="btn-edit" onclick={() => startEdit(b)}>✏️ Editar</button>
-							<button class="btn-danger" onclick={() => deleteBatata(b.id)}>🗑️ Excluir</button>
+							{#if auth.isValid}
+								<button class="btn-edit" onclick={() => startEdit(b)}>✏️ Editar</button>
+								<button class="btn-danger" onclick={() => deleteBatata(b.id)}>🗑️ Excluir</button>
+							{:else}
+								<span class="lock-notice" title="Faça login para editar ou excluir">🔒 Requer Login</span>
+							{/if}
 						</div>
 					{/if}
 				</li>
@@ -177,6 +254,14 @@
 		border-radius: 12px;
 		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 	}
+	.header-banner {
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-start;
+		gap: 1.5rem;
+		margin-bottom: 1.5rem;
+		flex-wrap: wrap;
+	}
 	h1 {
 		margin-top: 0;
 		font-size: 1.6rem;
@@ -184,8 +269,67 @@
 	}
 	.subtitle {
 		color: #64748b;
-		margin-bottom: 1.5rem;
+		margin-bottom: 0;
 	}
+	
+	/* Auth Box Styles */
+	.auth-box {
+		background: #f1f5f9;
+		padding: 1rem;
+		border-radius: 10px;
+		border: 1px solid #cbd5e1;
+		min-width: 300px;
+	}
+	.logged-in {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+		align-items: flex-start;
+	}
+	.user-badge {
+		font-size: 0.85rem;
+		color: #0f172a;
+	}
+	.btn-logout {
+		background: #ef4444;
+		color: white;
+		font-size: 0.8rem;
+		padding: 0.4rem 0.8rem;
+	}
+	.btn-logout:hover {
+		background: #dc2626;
+	}
+	.login-inputs {
+		display: flex;
+		gap: 0.4rem;
+		flex-wrap: wrap;
+	}
+	.login-inputs input {
+		font-size: 0.8rem;
+		padding: 0.4rem 0.6rem;
+		flex: 1;
+		min-width: 110px;
+	}
+	.btn-login {
+		background: #2563eb;
+		color: white;
+		font-size: 0.8rem;
+		padding: 0.4rem 0.8rem;
+	}
+	.btn-login:hover {
+		background: #1d4ed8;
+	}
+	.login-hint {
+		font-size: 0.75rem;
+		color: #64748b;
+		margin: 0.4rem 0 0 0;
+	}
+	.auth-error {
+		font-size: 0.75rem;
+		color: #dc2626;
+		margin: 0.4rem 0 0 0;
+	}
+
 	form {
 		background: #f8fafc;
 		padding: 1.25rem;
@@ -197,6 +341,17 @@
 		margin-top: 0;
 		margin-bottom: 0.75rem;
 		color: #334155;
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+	}
+	.public-tag {
+		font-size: 0.75rem;
+		background: #dcfce7;
+		color: #15803d;
+		padding: 0.15rem 0.5rem;
+		border-radius: 6px;
+		font-weight: 500;
 	}
 	.row {
 		display: flex;
@@ -256,6 +411,14 @@
 	.btn-danger:hover {
 		background: #fecaca;
 	}
+	.lock-notice {
+		font-size: 0.8rem;
+		color: #64748b;
+		background: #f1f5f9;
+		padding: 0.4rem 0.7rem;
+		border-radius: 6px;
+		border: 1px dashed #cbd5e1;
+	}
 	hr {
 		border: none;
 		border-top: 1px solid #e2e8f0;
@@ -295,6 +458,7 @@
 	.actions {
 		display: flex;
 		gap: 0.5rem;
+		align-items: center;
 	}
 	.badge {
 		background: #ffe4e6;
