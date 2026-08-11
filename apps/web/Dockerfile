@@ -1,4 +1,4 @@
-FROM node:22-alpine
+FROM node:22-alpine AS build
 
 WORKDIR /app
 
@@ -11,8 +11,16 @@ RUN npm install
 # Copia o código-fonte da aplicação
 COPY . .
 
-# Expõe a porta padrão do Vite / SvelteKit
-EXPOSE 5173
+ARG PUBLIC_POCKETBASE_URL
+ENV PUBLIC_POCKETBASE_URL=$PUBLIC_POCKETBASE_URL
 
-# Executa o servidor de desenvolvimento permitindo acesso externo (--host)
-CMD ["npm", "run", "dev", "--", "--host"]
+RUN npm run build
+
+
+FROM nginx:stable-alpine
+
+COPY --from=build /app/build /usr/share/nginx/html
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]
