@@ -65,7 +65,7 @@
 
 	// Instância SDK MercadoPago.js
 	let mpInstance: any = null;
-	const publicKey = env.PUBLIC_MERCADO_PAGO_PUBLIC_KEY || 'APP_USR_EXEMPLO';
+	const publicKey = import.meta.env.PUBLIC_MERCADO_PAGO_PUBLIC_KEY || env.PUBLIC_MERCADO_PAGO_PUBLIC_KEY || 'APP_USR_EXEMPLO';
 
 	function setPresetValue(v: number) {
 		valor = v;
