@@ -97,6 +97,11 @@ Cria **1 único recurso do tipo "Docker Compose"** apontando para a raiz do repo
    * Serviço `pocketbase`: `https://pb.seu-dominio.com`
 5. Clique em **Deploy**. Ambas as aplicações sobem juntas em uma única Stack!
 
+> [!IMPORTANT]
+> **🌐 Lembrete de Domínios & URLs no Coolify:**
+> * **Configure os Domínios (FQDN):** No painel do recurso no Coolify, certifique-se de preencher os domínios de cada serviço (`web` e `pocketbase`) com seus respectivos endereços HTTPS públicos.
+> * **Sincronize a `PUBLIC_POCKETBASE_URL`:** Na aba *Environment Variables* do recurso `web`, a variável `PUBLIC_POCKETBASE_URL` deve apontar exatamente para o domínio público do PocketBase (ex: `https://pb.seu-dominio.com`), com a opção **Available at Buildtime** marcada!
+
 #### 🔵 Abordagem 2: Serviços Separados (Public Dockerfile)
 Cria **2 recursos individuais** no Coolify:
 
