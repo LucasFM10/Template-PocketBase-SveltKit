@@ -36,9 +36,9 @@ EXPOSE 8090
 
 # Executa o servidor PocketBase com migrações automáticas
 # Nota: Redireciona a saída (2>&1) e substitui 0.0.0.0 por 127.0.0.1 nos logs do terminal
-CMD pocketbase serve \
-    --http=0.0.0.0:8090 \
-    --dir=/app/pb_data \
-    --migrationsDir=/app/pb_migrations \
-    --hooksDir=/app/pb_hooks \
-    --automigrate=1 2>&1 | sed 's/0\.0\.0\.0/127.0.0.1/g'
+CMD pocketbase migrate up --dir=/app/pb_data --migrationsDir=/app/pb_migrations && \
+    pocketbase serve \
+        --http=0.0.0.0:8090 \
+        --dir=/app/pb_data \
+        --migrationsDir=/app/pb_migrations \
+        --hooksDir=/app/pb_hooks 2>&1 | sed 's/0\.0\.0\.0/127.0.0.1/g'
