@@ -11,16 +11,16 @@
 	let loading = $state(false);
 	let errorMessage = $state('');
 
-	// Campos do formulário de Cartão de Crédito (Valores de teste oficiais do Mercado Pago)
-	let cardNumber = $state('5480 8328 0103 3311');
-	let cardholderName = $state('APRO VADO');
-	let cardExpirationMonth = $state('11');
-	let cardExpirationYear = $state('2030');
-	let securityCode = $state('123');
+	// Campos do formulário de Cartão de Crédito
+	let cardNumber = $state('');
+	let cardholderName = $state('');
+	let cardExpirationMonth = $state('');
+	let cardExpirationYear = $state('');
+	let securityCode = $state('');
 	let showSecurityCode = $state(false); // Alternador para ver/ocultar CVV (Olhinho 👁️)
-	let identificationNumber = $state('111.111.111-11');
+	let identificationNumber = $state('');
 	let installments = $state<number>(1);
-	let payerEmail = $state('test_user_card@testuser.com');
+	let payerEmail = $state('');
 
 	// Detecção de bandeira por BIN
 	let detectedBrand = $derived.by(() => {
