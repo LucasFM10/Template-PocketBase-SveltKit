@@ -40,4 +40,5 @@ CMD pocketbase serve \
     --http=0.0.0.0:8090 \
     --dir=/app/pb_data \
     --migrationsDir=/app/pb_migrations \
-    --hooksDir=/app/pb_hooks 2>&1 | sed 's/0\.0\.0\.0/127.0.0.1/g'
+    --hooksDir=/app/pb_hooks \
+    --automigrate=1 2>&1 | sed 's/0\.0\.0\.0/127.0.0.1/g'
