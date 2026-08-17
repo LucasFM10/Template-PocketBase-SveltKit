@@ -46,6 +46,7 @@ routerAdd("POST", "/api/pix", (c) => {
 
         const valor = parseFloat(reqData.valor || reqData.amount || reqData.transaction_amount || 10.00);
         const valorStr = valor.toFixed(2);
+        const payerEmail = reqData.email || reqData.payer_email || "";
 
         // 3. Gerar um X-Idempotency-Key único (UUID v4) por requisição
         function generateUUID() {
@@ -66,15 +67,24 @@ routerAdd("POST", "/api/pix", (c) => {
             });
         }
 
-        // 5. Chamada à Mercado Pago Orders API (POST /v1/orders) para Checkout Transparente Pix
+        // 5. Validar que o e-mail do pagador foi informado
+        if (!payerEmail) {
+            return c.json(200, {
+                success: false,
+                error: "E-mail do pagador é obrigatório para gerar o Pix. Informe o campo 'email' na requisição."
+            });
+        }
+
+        // 6. Chamada à Mercado Pago Orders API (POST /v1/orders) para Checkout Transparente Pix
         const mpUrl = "https://api.mercadopago.com/v1/orders";
         const orderPayload = {
             type: "online",
+            processing_mode: "automatic",
             total_amount: valorStr,
-            description: reqData.description || "Cobrança Pix de Teste",
-            external_reference: reqData.external_reference || ("order_" + Date.now()),
+            description: reqData.description || "Cobrança Pix",
+            external_reference: reqData.external_reference || ("order_pix_" + Date.now()),
             payer: {
-                email: reqData.email || "test_user_pix@testuser.com"
+                email: payerEmail
             },
             transactions: {
                 payments: [
@@ -112,7 +122,7 @@ routerAdd("POST", "/api/pix", (c) => {
             });
         }
 
-        // 6. Mapear os dados de resposta da Orders API
+        // 7. Mapear os dados de resposta da Orders API
         let qrCode = null;
         let qrCodeBase64 = null;
         let ticketUrl = null;

@@ -48,6 +48,7 @@
 	}
 	let pixData = $state<PixResponse | null>(null);
 	let pixCopied = $state(false);
+	let pixEmail = $state('');
 
 	// Resposta Cartão
 	interface CardResponse {
@@ -232,7 +233,8 @@
 				method: 'POST',
 				body: {
 					valor: Number(valor),
-					description: description.trim() || 'Cobrança Pix de Teste'
+					description: description.trim() || 'Cobrança Pix',
+					email: pixEmail.trim()
 				}
 			});
 			pixData = result as PixResponse;
@@ -348,7 +350,17 @@
 			<!-- Formulário Pix -->
 			{#if metodo === 'pix'}
 				<form onsubmit={handlePixSubmit}>
-					<button type="submit" class="btn-primary" disabled={loading}>
+					<div class="form-group">
+						<label for="pixEmail">E-mail do Pagador</label>
+						<input
+							type="email"
+							id="pixEmail"
+							bind:value={pixEmail}
+							placeholder="seuemail@exemplo.com"
+							required
+						/>
+					</div>
+					<button type="submit" class="btn-primary" disabled={loading || !pixEmail.trim()}>
 						{#if loading}
 							<span class="spinner"></span> Gerando Pix...
 						{:else}

@@ -91,11 +91,12 @@ routerAdd("POST", "/api/card-payment", (c) => {
 
         const orderPayload = {
             type: "online",
+            processing_mode: "automatic",
             total_amount: valorStr,
-            description: reqData.description || "Pagamento Cartão de Crédito - Teste",
+            description: reqData.description || "Pagamento Cartão de Crédito",
             external_reference: reqData.external_reference || ("order_card_" + Date.now()),
             payer: {
-                email: (reqData.payer && reqData.payer.email) ? reqData.payer.email : "test_user_card@testuser.com"
+                email: (reqData.payer && reqData.payer.email) ? reqData.payer.email : (reqData.email || reqData.payer_email || "test_user_card@testuser.com")
             },
             transactions: {
                 payments: [
