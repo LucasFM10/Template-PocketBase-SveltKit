@@ -14,7 +14,11 @@ services:
       context: ./apps/pocketbase
       dockerfile: Dockerfile
       args:
-        PB_VERSION: "0.39.4"
+        PB_VERSION: "${PB_VERSION:-0.39.4}"
+    environment:
+      - MERCADO_PAGO_ACCESS_TOKEN=${MERCADO_PAGO_ACCESS_TOKEN:-APP_USR_EXEMPLO}
+      - PB_SUPERUSER_EMAIL=${PB_SUPERUSER_EMAIL:-admin@admin.com}
+      - PB_SUPERUSER_PASSWORD=${PB_SUPERUSER_PASSWORD:-admin123456}
     env_file:
       - .env
     ports:
@@ -38,8 +42,11 @@ services:
       context: ./apps/web
       dockerfile: Dockerfile
       args:
-        PUBLIC_POCKETBASE_URL: "http://127.0.0.1:8090"
-        PUBLIC_MERCADO_PAGO_PUBLIC_KEY: "${PUBLIC_MERCADO_PAGO_PUBLIC_KEY}"
+        PUBLIC_POCKETBASE_URL: "${PUBLIC_POCKETBASE_URL:-http://127.0.0.1:8090}"
+        PUBLIC_MERCADO_PAGO_PUBLIC_KEY: "${PUBLIC_MERCADO_PAGO_PUBLIC_KEY:-APP_USR_EXEMPLO}"
+    environment:
+      - PUBLIC_POCKETBASE_URL=${PUBLIC_POCKETBASE_URL:-http://127.0.0.1:8090}
+      - PUBLIC_MERCADO_PAGO_PUBLIC_KEY=${PUBLIC_MERCADO_PAGO_PUBLIC_KEY:-APP_USR_EXEMPLO}
     ports:
       - "5173:80"
     env_file:
