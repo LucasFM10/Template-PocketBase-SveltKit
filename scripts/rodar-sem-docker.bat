@@ -2,8 +2,7 @@
 chcp 65001 >nul
 cd /d "%~dp0.."
 
-if not exist "apps\web\.env" if exist "apps\web\.env.example" copy "apps\web\.env.example" "apps\web\.env" >nul
-if not exist "apps\pocketbase\.env" if exist "apps\pocketbase\.env.example" copy "apps\pocketbase\.env.example" "apps\pocketbase\.env" >nul
+if not exist ".env" if exist ".env.example" copy ".env.example" ".env" >nul
 
 if not exist "apps\web\node_modules" (
     echo 📦 Primeira execucao detectada! Instalando dependencias do SvelteKit...

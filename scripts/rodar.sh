@@ -8,6 +8,12 @@ if [ "$1" == "--sem-docker" ]; then
 fi
 
 if ! "$DIR/rodar-com-docker.sh"; then
-    echo "⚠️ Docker falhou ou não está ativo. Alternando para modo sem Docker..."
-    "$DIR/rodar-sem-docker.sh"
+    echo ""
+    echo "⚠️ Docker falhou ou não está ativo."
+    read -p "Deseja tentar rodar no modo SEM Docker agora? (s/n): " RESPOSTA
+    if [[ "$RESPOSTA" =~ ^[Ss]$ ]]; then
+        "$DIR/rodar-sem-docker.sh"
+    else
+        echo "Execução encerrada."
+    fi
 fi

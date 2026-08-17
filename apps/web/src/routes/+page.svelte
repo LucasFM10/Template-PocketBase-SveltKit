@@ -138,7 +138,10 @@
 	<div class="header-banner">
 		<div>
 			<h1>🥔 Gerenciador de Batatas</h1>
-			<p class="subtitle">Exemplo CRUD com Autenticação & Permissões (SvelteKit + PocketBase).</p>
+			<p class="subtitle">
+				Exemplo CRUD com Autenticação & Permissões (SvelteKit + PocketBase).
+			</p>
+			<a href="/pagamento" style="display: inline-block; margin-top: 0.5rem; background: #2563eb; color: white; padding: 0.35rem 0.75rem; border-radius: 6px; text-decoration: none; font-size: 0.85rem; font-weight: 600;">💳 Testar Mercado Pago (Pix & Cartão) ↗</a>
 		</div>
 
 		<!-- Seção de Autenticação / Perfil -->

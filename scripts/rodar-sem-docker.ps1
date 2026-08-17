@@ -4,15 +4,11 @@ $ProjectRoot = Resolve-Path "$PSScriptRoot\.."
 $PbExe = "$ProjectRoot\apps\pocketbase\pocketbase.exe"
 $PbData = "$ProjectRoot\apps\pocketbase\pb_data"
 $PbMigrations = "$ProjectRoot\apps\pocketbase\pb_migrations"
-$PbEnvFile = "$ProjectRoot\apps\pocketbase\.env"
+$RootEnvFile = "$ProjectRoot\.env"
+$RootEnvEx = "$ProjectRoot\.env.example"
 
 # Auto-setup .env se necessário
-$WebEnv = "$ProjectRoot\apps\web\.env"
-$WebEnvEx = "$ProjectRoot\apps\web\.env.example"
-if (-not (Test-Path $WebEnv) -and (Test-Path $WebEnvEx)) { Copy-Item $WebEnvEx $WebEnv }
-
-$PbEnvEx = "$ProjectRoot\apps\pocketbase\.env.example"
-if (-not (Test-Path $PbEnvFile) -and (Test-Path $PbEnvEx)) { Copy-Item $PbEnvEx $PbEnvFile }
+if (-not (Test-Path $RootEnvFile) -and (Test-Path $RootEnvEx)) { Copy-Item $RootEnvEx $RootEnvFile }
 
 # Auto-setup node_modules se necessário
 $NodeModules = "$ProjectRoot\apps\web\node_modules"
@@ -23,9 +19,9 @@ if (-not (Test-Path $NodeModules)) {
     Set-Location $ProjectRoot
 }
 
-# Carrega variáveis de ambiente de apps/pocketbase/.env se existir
-if (Test-Path $PbEnvFile) {
-    Get-Content $PbEnvFile | ForEach-Object {
+# Carrega variáveis de ambiente do .env na raiz se existir
+if (Test-Path $RootEnvFile) {
+    Get-Content $RootEnvFile | ForEach-Object {
         if ($_ -match "^\s*([^#=]+)\s*=\s*(.*)\s*$") {
             [System.Environment]::SetEnvironmentVariable($matches[1].Trim(), $matches[2].Trim(), "Process")
         }
