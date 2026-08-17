@@ -1,8 +1,8 @@
 # ============================================================
-# Docker Compose — Desenvolvimento local e referência
+# Docker Compose — Desenvolvimento local e produção
 # ============================================================
 # Para rodar tudo via Docker: docker compose up --build
-# No Coolify: Pode ser deployado como 1 Recurso Único (Docker Compose) ou Recursos Separados
+# No Coolify: Suporta deploy como 1 Recurso Único ou Separado
 # ============================================================
 
 services:
@@ -25,8 +25,6 @@ services:
       - "8090:8090"
     volumes:
       - pb_data:/app/pb_data
-      - ./apps/pocketbase/pb_migrations:/app/pb_migrations
-      - ./apps/pocketbase/pb_hooks:/app/pb_hooks
     restart: unless-stopped
     healthcheck:
       test: [ "CMD-SHELL", "wget -q --spider http://127.0.0.1:8090/api/health || exit 1" ]
@@ -52,9 +50,6 @@ services:
       - "5173:80"
     env_file:
       - .env
-    volumes:
-      - ./apps/web:/app
-      - /app/node_modules
     depends_on:
       pocketbase:
         condition: service_healthy
