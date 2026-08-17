@@ -82,9 +82,30 @@ Para testar a tela de pagamento em ambiente de testes (`/pagamento`):
 * **Elo:** `5067 7667 8388 8311`
 
 ### 🚀 Deploy em Produção (Coolify)
-Recomendado subir o projeto via Docker Compose no Coolify:
-1. **Recurso `web` (SvelteKit):** Adicionar `PUBLIC_POCKETBASE_URL` e `PUBLIC_MERCADO_PAGO_PUBLIC_KEY` nas variáveis de ambiente marcando a opção **Build Variable**.
-2. **Recurso `pocketbase` (Backend):** Adicionar `MERCADO_PAGO_ACCESS_TOKEN` nas variáveis de ambiente.
+
+O projeto suporta **duas abordagens de deploy** no Coolify:
+
+#### 🟢 Abordagem 1: 1 Único Recurso (Docker Compose — Recomendado ⭐)
+Cria **1 único recurso do tipo "Docker Compose"** apontando para a raiz do repositório.
+
+1. No Coolify, selecione **+ New Resource** → **Docker Compose** → Conecte ao seu repositório Git.
+2. O Coolify detectará o arquivo `docker-compose.yml` automaticamente.
+3. Na aba **Environment Variables**, adicione as variáveis do arquivo `.env` (ex: `PUBLIC_POCKETBASE_URL`, `PUBLIC_MERCADO_PAGO_PUBLIC_KEY`, `MERCADO_PAGO_ACCESS_TOKEN`, `PB_SUPERUSER_EMAIL`, `PB_SUPERUSER_PASSWORD`).
+   * *Atenção:* Marque as variáveis do frontend (`PUBLIC_`) como **Build Variable** no painel do Coolify.
+4. Defina os domínios FQDN para os dois serviços no Coolify:
+   * Serviço `web`: `https://seu-dominio.com`
+   * Serviço `pocketbase`: `https://pb.seu-dominio.com`
+5. Clique em **Deploy**. Ambas as aplicações sobem juntas em uma única Stack!
+
+#### 🔵 Abordagem 2: Serviços Separados (Public Dockerfile)
+Cria **2 recursos individuais** no Coolify:
+
+1. **Recurso `pocketbase` (Backend):**
+   * Tipo: **Public Dockerfile** → Base Directory: `/apps/pocketbase`.
+   * Environment Variable: `MERCADO_PAGO_ACCESS_TOKEN`.
+2. **Recurso `web` (SvelteKit Frontend):**
+   * Tipo: **Public Dockerfile** → Base Directory: `/apps/web`.
+   * Environment Variables (marcar como **Build Variable**): `PUBLIC_POCKETBASE_URL` (com a URL de produção do PocketBase) e `PUBLIC_MERCADO_PAGO_PUBLIC_KEY`.
 
 ---
 

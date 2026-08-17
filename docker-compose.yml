@@ -2,7 +2,7 @@
 # Docker Compose — Desenvolvimento local e referência
 # ============================================================
 # Para rodar tudo via Docker: docker compose up --build
-# No Coolify: cada serviço é deployado como recurso separado
+# No Coolify: Pode ser deployado como 1 Recurso Único (Docker Compose) ou Recursos Separados
 # ============================================================
 
 services:
