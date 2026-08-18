@@ -474,21 +474,32 @@
 								type="email"
 								id="payerEmail"
 								bind:value={payerEmail}
-								placeholder="teste@testuser.com"
+								placeholder="seuemail@exemplo.com"
 								required
 							/>
 						</div>
 
 						<div class="form-group col-half">
-							<label for="installments">Parcelas</label>
-							<select id="installments" bind:value={installments}>
-								<option value={1}>1x de R$ {valor.toFixed(2)} (à vista)</option>
-								<option value={2}>2x de R$ {(valor / 2).toFixed(2)}</option>
-								<option value={3}>3x de R$ {(valor / 3).toFixed(2)}</option>
-								<option value={6}>6x de R$ {(valor / 6).toFixed(2)}</option>
-								<option value={12}>12x de R$ {(valor / 12).toFixed(2)}</option>
-							</select>
+							<label for="identificationNumber">CPF do Titular</label>
+							<input
+								type="text"
+								id="identificationNumber"
+								bind:value={identificationNumber}
+								placeholder="000.000.000-00"
+								required
+							/>
 						</div>
+					</div>
+
+					<div class="form-group">
+						<label for="installments">Parcelas</label>
+						<select id="installments" bind:value={installments}>
+							<option value={1}>1x de R$ {valor.toFixed(2)} (à vista)</option>
+							<option value={2}>2x de R$ {(valor / 2).toFixed(2)}</option>
+							<option value={3}>3x de R$ {(valor / 3).toFixed(2)}</option>
+							<option value={6}>6x de R$ {(valor / 6).toFixed(2)}</option>
+							<option value={12}>12x de R$ {(valor / 12).toFixed(2)}</option>
+						</select>
 					</div>
 
 					<button type="submit" class="btn-primary" disabled={loading}>
