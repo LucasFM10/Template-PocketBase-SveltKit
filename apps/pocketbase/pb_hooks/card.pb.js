@@ -89,15 +89,29 @@ routerAdd("POST", "/api/card-payment", (c) => {
             paymentMethodObj.issuer_id = String(reqData.issuer_id);
         }
 
+        const payerEmailValue = (reqData.payer && reqData.payer.email) ? reqData.payer.email : (reqData.email || reqData.payer_email || "");
+        const payerIdentification = (reqData.payer && reqData.payer.identification) ? reqData.payer.identification : null;
+        const identificationNumber = reqData.identification_number || (payerIdentification && payerIdentification.number) || "";
+        const identificationType = reqData.identification_type || (payerIdentification && payerIdentification.type) || "CPF";
+
+        const payerObj = {
+            email: payerEmailValue
+        };
+
+        if (identificationNumber) {
+            payerObj.identification = {
+                type: identificationType,
+                number: identificationNumber.replace(/[.\-\/]/g, "")
+            };
+        }
+
         const orderPayload = {
             type: "online",
             processing_mode: "automatic",
             total_amount: valorStr,
             description: reqData.description || "Pagamento Cartão de Crédito",
             external_reference: reqData.external_reference || ("order_card_" + Date.now()),
-            payer: {
-                email: (reqData.payer && reqData.payer.email) ? reqData.payer.email : (reqData.email || reqData.payer_email || "test_user_card@testuser.com")
-            },
+            payer: payerObj,
             transactions: {
                 payments: [
                     {

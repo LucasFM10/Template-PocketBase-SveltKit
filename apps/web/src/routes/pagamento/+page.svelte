@@ -200,9 +200,10 @@
 					payment_method_id: detectedBrand,
 					installments: Number(installments),
 					valor: Number(valor),
-					description: description.trim() || 'Pagamento Cartão - Teste',
+					description: description.trim() || 'Pagamento Cartão de Crédito',
+					identification_number: identificationNumber.trim(),
 					payer: {
-						email: payerEmail.trim() || 'test_user_card@testuser.com'
+						email: payerEmail.trim()
 					}
 				}
 			});
